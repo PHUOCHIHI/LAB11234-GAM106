@@ -22,7 +22,7 @@ public class UserController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<User>>> GetUsers()
     {
-        return await _context.Users
+        return await _context.LegacyUsers
             .Include(u => u.role)
             .Include(u => u.region)
             .ToListAsync();
@@ -32,7 +32,7 @@ public class UserController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<User>> GetUser(int id)
     {
-        var user = await _context.Users.Include(u => u.role).Include(u => u.region).FirstOrDefaultAsync(u => u.userId == id);
+        var user = await _context.LegacyUsers.Include(u => u.role).Include(u => u.region).FirstOrDefaultAsync(u => u.userId == id);
 
         if (user == null)
         {
@@ -47,7 +47,7 @@ public class UserController : ControllerBase
     public async Task<ActionResult<User>> PostUser(User user)
     {
         // Add new user to the database
-        _context.Users.Add(user);
+        _context.LegacyUsers.Add(user);
         await _context.SaveChangesAsync();
 
         return CreatedAtAction("GetUser", new { id = user.userId}, user);

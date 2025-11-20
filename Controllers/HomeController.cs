@@ -20,7 +20,7 @@ public class HomeController : Controller
     public async Task<IActionResult> Index()
     {
         // Example: Get all users from database
-        var users = await _context.Users.ToListAsync();
+        var users = await _context.LegacyUsers.ToListAsync();
         return View(users);
     }
 

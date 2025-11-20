@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApplication1.Data;
 
@@ -10,9 +11,11 @@ using WebApplication1.Data;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251120053622_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.10");
@@ -167,9 +170,6 @@ namespace WebApplication1.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("INTEGER");
 
@@ -186,12 +186,6 @@ namespace WebApplication1.Migrations
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("OTP")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("OTPExpiry")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PasswordHash")
@@ -249,19 +243,16 @@ namespace WebApplication1.Migrations
                         new
                         {
                             LevelId = 1,
-                            Description = "Cấp độ dễ cho người mới bắt đầu",
                             title = "Cấp độ 1"
                         },
                         new
                         {
                             LevelId = 2,
-                            Description = "Cấp độ trung bình",
                             title = "Cấp độ 2"
                         },
                         new
                         {
                             LevelId = 3,
-                            Description = "Cấp độ khó",
                             title = "Cấp độ 3"
                         });
                 });
@@ -331,68 +322,24 @@ namespace WebApplication1.Migrations
                         new
                         {
                             QuestionId = 1,
-                            Answer = "Hà Nội",
-                            ContentQuestion = "Thủ đô của Việt Nam là gì?",
-                            Option1 = "Hà Nội",
-                            Option2 = "Hồ Chí Minh",
-                            Option3 = "Đà Nẵng",
-                            Option4 = "Huế",
+                            Answer = "Đáp án 1",
+                            ContentQuestion = "Câu hỏi 1",
+                            Option1 = "Đáp án 1",
+                            Option2 = "Đáp án 2",
+                            Option3 = "Đáp án 3",
+                            Option4 = "Đáp án 4",
                             levelId = 1
                         },
                         new
                         {
                             QuestionId = 2,
-                            Answer = "Sông Đồng Nai",
-                            ContentQuestion = "Sông nào dài nhất Việt Nam?",
-                            Option1 = "Sông Hồng",
-                            Option2 = "Sông Đồng Nai",
-                            Option3 = "Sông Cửu Long",
-                            Option4 = "Sông Mê Kông",
-                            levelId = 1
-                        },
-                        new
-                        {
-                            QuestionId = 3,
-                            Answer = "Fansipan",
-                            ContentQuestion = "Núi nào cao nhất Việt Nam?",
-                            Option1 = "Bà Đen",
-                            Option2 = "Fansipan",
-                            Option3 = "Bạch Mã",
-                            Option4 = "Lang Biang",
+                            Answer = "Đáp án 2",
+                            ContentQuestion = "Câu hỏi 2",
+                            Option1 = "Đáp án 1",
+                            Option2 = "Đáp án 2",
+                            Option3 = "Đáp án 3",
+                            Option4 = "Đáp án 4",
                             levelId = 2
-                        },
-                        new
-                        {
-                            QuestionId = 4,
-                            Answer = "63",
-                            ContentQuestion = "Việt Nam có bao nhiêu tỉnh thành?",
-                            Option1 = "58",
-                            Option2 = "63",
-                            Option3 = "64",
-                            Option4 = "65",
-                            levelId = 2
-                        },
-                        new
-                        {
-                            QuestionId = 5,
-                            Answer = "Quần thể di tích Cố đô Huế",
-                            ContentQuestion = "Di sản văn hóa nào của Việt Nam được UNESCO công nhận đầu tiên?",
-                            Option1 = "Vịnh Hạ Long",
-                            Option2 = "Phố cổ Hội An",
-                            Option3 = "Quần thể di tích Cố đô Huế",
-                            Option4 = "Thánh địa Mỹ Sơn",
-                            levelId = 3
-                        },
-                        new
-                        {
-                            QuestionId = 6,
-                            Answer = "1975",
-                            ContentQuestion = "Năm nào Việt Nam chính thức thống nhất?",
-                            Option1 = "1973",
-                            Option2 = "1974",
-                            Option3 = "1975",
-                            Option4 = "1976",
-                            levelId = 3
                         });
                 });
 
@@ -420,21 +367,6 @@ namespace WebApplication1.Migrations
                         {
                             RegionId = 2,
                             Name = "Đồng bằng sông cửu long"
-                        },
-                        new
-                        {
-                            RegionId = 3,
-                            Name = "Bắc Trung Bộ"
-                        },
-                        new
-                        {
-                            RegionId = 4,
-                            Name = "Nam Trung Bộ"
-                        },
-                        new
-                        {
-                            RegionId = 5,
-                            Name = "Tây Nguyên"
                         });
                 });
 
@@ -451,23 +383,6 @@ namespace WebApplication1.Migrations
                     b.HasKey("roleId");
 
                     b.ToTable("Roles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            roleId = 1,
-                            Name = "Admin"
-                        },
-                        new
-                        {
-                            roleId = 2,
-                            Name = "User"
-                        },
-                        new
-                        {
-                            roleId = 3,
-                            Name = "Moderator"
-                        });
                 });
 
             modelBuilder.Entity("WebApplication1.Models.User", b =>
