@@ -31,7 +31,8 @@ builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Emai
 builder.Services.AddScoped<EmailService>(serviceProvider =>
 {
     var emailSettings = builder.Configuration.GetSection("EmailSettings").Get<EmailSettings>();
-    return new EmailService(emailSettings!);
+    var logger = serviceProvider.GetRequiredService<ILogger<EmailService>>();
+    return new EmailService(emailSettings!, logger);
 });
 
 var app = builder.Build();

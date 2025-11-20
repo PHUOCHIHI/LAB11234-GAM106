@@ -10,3 +10,5 @@ public class UpdateUserInformationDTO
     public IFormFile? Avatar { get; set; }
 }
 
+
+

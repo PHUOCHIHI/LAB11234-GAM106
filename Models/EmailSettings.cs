@@ -10,3 +10,5 @@ public class EmailSettings
     public string Password { get; set; } = string.Empty;
 }
 
+
+
