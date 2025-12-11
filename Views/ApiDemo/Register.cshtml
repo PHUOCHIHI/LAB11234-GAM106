@@ -1,0 +1,86 @@
+@model WebApplication1.DTO.RegisterDTO
+
+@{
+    ViewData["Title"] = "API Register Demo";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3 class="mb-0">Đăng ký tài khoản</h3>
+                    <small class="d-block">Thông tin sẽ được gửi tới API để tạo user mới</small>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Register" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email" class="form-control" placeholder="nhapemail@example.com" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label"></label>
+                            <input asp-for="Password" type="password" class="form-control" placeholder="Mật khẩu" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label"></label>
+                            <input asp-for="Name" class="form-control" placeholder="Tên hiển thị" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="LinkAvatar" class="form-label"></label>
+                            <input asp-for="LinkAvatar" class="form-control" placeholder="Link ảnh avatar (tùy chọn)" />
+                            <span asp-validation-for="LinkAvatar" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="RegionId" class="form-label"></label>
+                            <input asp-for="RegionId" type="number" class="form-control" placeholder="Ví dụ: 1" />
+                            <span asp-validation-for="RegionId" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Gửi đăng ký</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            @if (ViewBag.StatusCode != null)
+            {
+                <div class="mt-4">
+                    @if (ViewBag.IsSuccessStatusCode == true)
+                    {
+                        <div class="alert alert-success" role="alert">
+                            <h5 class="alert-heading mb-1">Đăng ký thành công!</h5>
+                            <p class="mb-0">Mã trạng thái: @ViewBag.StatusCode</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            <h5 class="alert-heading mb-1">Đăng ký thất bại</h5>
+                            <p class="mb-0">Mã trạng thái: @ViewBag.StatusCode</p>
+                        </div>
+                    }
+
+                    <div class="card mt-2">
+                        <div class="card-header">
+                            Phản hồi chi tiết từ API
+                        </div>
+                        <div class="card-body">
+                            <pre class="mb-0" style="white-space: pre-wrap; word-break: break-word;">@ViewBag.RawResponse</pre>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

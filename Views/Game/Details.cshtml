@@ -1,0 +1,23 @@
+@model WebApplication1.Models.GameLevel
+
+@{
+    ViewData["Title"] = "Chi tiết Game Level";
+}
+
+<div class="container py-4">
+    <h2 class="mb-3">Chi tiết Game Level</h2>
+
+    <dl class="row">
+        <dt class="col-sm-3">Mã level</dt>
+        <dd class="col-sm-9">@Model.LevelId</dd>
+
+        <dt class="col-sm-3">Tiêu đề</dt>
+        <dd class="col-sm-9">@Model.title</dd>
+
+        <dt class="col-sm-3">Mô tả</dt>
+        <dd class="col-sm-9">@Model.Description</dd>
+    </dl>
+
+    <a asp-action="Edit" asp-route-id="@Model.LevelId" class="btn btn-primary">Sửa</a>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Quay lại</a>
+</div>

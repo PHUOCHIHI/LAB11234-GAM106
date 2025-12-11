@@ -19,8 +19,8 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
-        // Example: Get all users from database
-        var users = await _context.LegacyUsers.ToListAsync();
+        // Get all Identity users so registered accounts appear on the Home page
+        var users = await _context.Users.ToListAsync();
         return View(users);
     }
 

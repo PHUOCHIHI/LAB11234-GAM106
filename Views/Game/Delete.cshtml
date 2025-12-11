@@ -1,0 +1,28 @@
+@model WebApplication1.Models.GameLevel
+
+@{
+    ViewData["Title"] = "Xóa Game Level";
+}
+
+<div class="container py-4">
+    <h2 class="mb-3 text-danger">Xóa Game Level</h2>
+    <p>Bạn có chắc chắn muốn xóa level sau?</p>
+
+    <dl class="row">
+        <dt class="col-sm-3">Mã level</dt>
+        <dd class="col-sm-9">@Model.LevelId</dd>
+
+        <dt class="col-sm-3">Tiêu đề</dt>
+        <dd class="col-sm-9">@Model.title</dd>
+
+        <dt class="col-sm-3">Mô tả</dt>
+        <dd class="col-sm-9">@Model.Description</dd>
+    </dl>
+
+    <form asp-action="Delete" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="LevelId" />
+        <button type="submit" class="btn btn-danger">Xóa</button>
+        <a asp-action="Index" class="btn btn-secondary ms-2">Hủy</a>
+    </form>
+</div>

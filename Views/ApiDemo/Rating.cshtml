@@ -1,0 +1,82 @@
+@model List<WebApplication1.ViewModel.RatingVM>
+
+@{
+    ViewData["Title"] = "API Rating Demo";
+}
+
+<h1>Bảng xếp hạng (Rating)</h1>
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">@ViewBag.Error</div>
+}
+
+@if (ViewBag.RawResponse != null)
+{
+    <details class="mb-3">
+        <summary>Raw API response</summary>
+        <pre>@ViewBag.RawResponse</pre>
+    </details>
+}
+
+<h3>1. Xếp hạng theo từng vùng (Region)</h3>
+
+@foreach (var region in Model)
+{
+    <h4>@region.NameRegion</h4>
+    <table class="table table-striped table-hover align-middle">
+        <thead>
+            <tr>
+                <th>Người chơi</th>
+                <th>Tổng điểm</th>
+                <th>Số level đã chơi</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var u in region.userResultSums)
+        {
+            <tr>
+                <td>@u.NameUser</td>
+                <td>@u.SumScore</td>
+                <td>@u.SumLevel</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@{
+    var allUsers = Model
+        .SelectMany(r => r.userResultSums.Select(u => new { Region = r.NameRegion, User = u }))
+        .OrderByDescending(x => x.User.SumScore)
+        .Take(6) // chỉ lấy top 6
+        .ToList();
+    var rank = 1;
+}
+
+<h3 class="mt-4">2. Xếp hạng toàn bộ người chơi (Global)</h3>
+
+<table class="table table-striped table-hover align-middle">
+    <thead>
+        <tr>
+            <th>Hạng</th>
+            <th>Người chơi</th>
+            <th>Region</th>
+            <th>Tổng điểm</th>
+            <th>Số level đã chơi</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in allUsers)
+    {
+        <tr>
+            <td>@rank</td>
+            <td>@item.User.NameUser</td>
+            <td>@item.Region</td>
+            <td>@item.User.SumScore</td>
+            <td>@item.User.SumLevel</td>
+        </tr>
+        rank++;
+    }
+    </tbody>
+</table>

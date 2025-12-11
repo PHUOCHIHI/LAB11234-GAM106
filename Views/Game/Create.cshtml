@@ -1,0 +1,36 @@
+@model WebApplication1.Models.GameLevel
+
+@{
+    ViewData["Title"] = "Thêm Game Level";
+}
+
+<div class="container py-4">
+    <h2 class="mb-3">Thêm Game Level mới</h2>
+
+    <form asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+        <div class="mb-3">
+            <label asp-for="LevelId" class="form-label"></label>
+            <input asp-for="LevelId" class="form-control" />
+            <span asp-validation-for="LevelId" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="title" class="form-label"></label>
+            <input asp-for="title" class="form-control" />
+            <span asp-validation-for="title" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label"></label>
+            <textarea asp-for="Description" class="form-control"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-success">Lưu</button>
+        <a asp-action="Index" class="btn btn-secondary ms-2">Quay lại</a>
+    </form>
+</div>

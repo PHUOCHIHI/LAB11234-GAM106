@@ -1,0 +1,31 @@
+@model WebApplication1.Models.Question
+
+@{
+    ViewData["Title"] = "Xóa Question";
+}
+
+<div class="container py-4">
+    <h2 class="mb-3 text-danger">Xóa Question</h2>
+    <p>Bạn có chắc chắn muốn xóa câu hỏi sau?</p>
+
+    <dl class="row">
+        <dt class="col-sm-3">ID</dt>
+        <dd class="col-sm-9">@Model.QuestionId</dd>
+
+        <dt class="col-sm-3">Nội dung</dt>
+        <dd class="col-sm-9">@Model.ContentQuestion</dd>
+
+        <dt class="col-sm-3">Đáp án đúng</dt>
+        <dd class="col-sm-9">@Model.Answer</dd>
+
+        <dt class="col-sm-3">LevelId</dt>
+        <dd class="col-sm-9">@Model.levelId</dd>
+    </dl>
+
+    <form asp-action="Delete" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="QuestionId" />
+        <button type="submit" class="btn btn-danger">Xóa</button>
+        <a asp-action="Index" class="btn btn-secondary ms-2">Hủy</a>
+    </form>
+</div>

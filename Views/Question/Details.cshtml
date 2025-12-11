@@ -1,0 +1,38 @@
+@model WebApplication1.Models.Question
+
+@{
+    ViewData["Title"] = "Chi tiết Question";
+}
+
+<div class="container py-4">
+    <h2 class="mb-3">Chi tiết Question</h2>
+
+    <dl class="row">
+        <dt class="col-sm-3">ID</dt>
+        <dd class="col-sm-9">@Model.QuestionId</dd>
+
+        <dt class="col-sm-3">Nội dung</dt>
+        <dd class="col-sm-9">@Model.ContentQuestion</dd>
+
+        <dt class="col-sm-3">Option1</dt>
+        <dd class="col-sm-9">@Model.Option1</dd>
+
+        <dt class="col-sm-3">Option2</dt>
+        <dd class="col-sm-9">@Model.Option2</dd>
+
+        <dt class="col-sm-3">Option3</dt>
+        <dd class="col-sm-9">@Model.Option3</dd>
+
+        <dt class="col-sm-3">Option4</dt>
+        <dd class="col-sm-9">@Model.Option4</dd>
+
+        <dt class="col-sm-3">Đáp án đúng</dt>
+        <dd class="col-sm-9">@Model.Answer</dd>
+
+        <dt class="col-sm-3">LevelId</dt>
+        <dd class="col-sm-9">@Model.levelId</dd>
+    </dl>
+
+    <a asp-action="Edit" asp-route-id="@Model.QuestionId" class="btn btn-primary">Sửa</a>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Quay lại</a>
+</div>

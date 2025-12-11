@@ -1,6 +1,12 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using WebApplication1.Data;
 using WebApplication1.DTO;
 using WebApplication1.Models;
@@ -19,14 +25,39 @@ public class APIGameController : ControllerBase
     private UserManager<ApplicationUser> _userManager;
     private SignInManager<ApplicationUser> _signInManager;
     private EmailService _emailService;
+    private readonly IConfiguration _configuration;
 
-    public APIGameController(ApplicationDbContext db, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, EmailService emailService)
+    public APIGameController(ApplicationDbContext db, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, EmailService emailService, IConfiguration configuration)
     {
         _db = db;
         _response = new ResponseApi();
         _userManager = userManager;
         _signInManager = signInManager;
         _emailService = emailService;
+        _configuration = configuration;
+    }
+
+    private string GenerateJwtToken(ApplicationUser user)
+    {
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+        var claims = new[]
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, user.UserName ?? string.Empty),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim(ClaimTypes.NameIdentifier, user.Id)
+        };
+
+        var token = new JwtSecurityToken(
+            issuer: _configuration["Jwt:Issuer"],
+            audience: _configuration["Jwt:Audience"],
+            claims: claims,
+            expires: DateTime.Now.AddMinutes(30),
+            signingCredentials: credentials
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
     [HttpGet("GetAllGameLevel")]
@@ -49,6 +80,29 @@ public class APIGameController : ControllerBase
         }
     }
 
+    [HttpGet("GetAllResultByUser/{userId}")]
+    [Authorize]
+    public async Task<IActionResult> GetAllResultByUser(string userId)
+    {
+        try
+        {
+            var result = await _db.LevelResults.Where(x => x.UserId == userId).ToListAsync();
+
+            _response.IsSuccess = true;
+            _response.Notification = "Lấy dữ liệu thành công";
+            _response.Data = result;
+            return Ok(_response);
+        }
+        catch (Exception ex)
+        {
+            _response.IsSuccess = false;
+            _response.Notification = "Lỗi";
+            _response.Data = ex.Message;
+            return BadRequest(_response);
+        }
+    }
+
+    [Authorize]
     [HttpGet("GetAllQuestionGame")]
     public async Task<IActionResult> GetAllQuestionGame()
     {
@@ -69,6 +123,7 @@ public class APIGameController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpGet("GetAllQuestionGameByLevel/{levelId}")]
     public async Task<IActionResult> GetAllQuestionGameByLevel(int levelId)
     {
@@ -92,25 +147,26 @@ public class APIGameController : ControllerBase
         }
     }
 
-    [HttpGet("GetAllRegion")]
-    public async Task<IActionResult> GetAllRegion()
+    [AllowAnonymous]              // THÊM dòng này
+[HttpGet("GetAllRegion")]
+public async Task<IActionResult> GetAllRegion()
+{
+    try
     {
-        try
-        {
-            var regions = await _db.Regions.ToListAsync();
-            _response.IsSuccess = true;
-            _response.Notification = "Lấy dữ liệu thành công";
-            _response.Data = regions;
-            return Ok(_response);
-        }
-        catch (Exception ex)
-        {
-            _response.IsSuccess = false;
-            _response.Notification = "Lỗi";
-            _response.Data = ex.Message;
-            return BadRequest(_response);
-        }
+        var regions = await _db.Regions.ToListAsync();
+        _response.IsSuccess = true;
+        _response.Notification = "Lấy dữ liệu thành công";
+        _response.Data = regions;
+        return Ok(_response);
     }
+    catch (Exception ex)
+    {
+        _response.IsSuccess = false;
+        _response.Notification = "Lỗi";
+        _response.Data = ex.Message;
+        return BadRequest(_response);
+    }
+}
 
     [HttpPost("Register")]
     public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
@@ -171,9 +227,16 @@ public class APIGameController : ControllerBase
 
             if (result.Succeeded)
             {
+                var token = GenerateJwtToken(user);
+                var data = new
+                {
+                    token = token,
+                    user = user
+                };
+
                 _response.IsSuccess = true;
                 _response.Notification = "Đăng nhập thành công";
-                _response.Data = user;
+                _response.Data = data;
                 return Ok(_response);
             }
             else
@@ -193,6 +256,7 @@ public class APIGameController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpPost("SaveResult")]
     public async Task<IActionResult> SaveResult([FromBody] LevelResultDTO levelResultDTO)
     {
@@ -232,26 +296,45 @@ public class APIGameController : ControllerBase
             var users = await _db.Users.ToListAsync();
             var regions = await _db.Regions.ToListAsync();
 
-            var userResults = levelResults
-                .Join(users,
-                    lr => lr.UserId,
-                    u => u.Id,
-                    (lr, u) => new
+            List<UserResultSum> userResults;
+
+            if (levelResults.Count == 0)
+            {
+                // Không có dữ liệu điểm trong DB => tạo bảng xếp hạng demo từ danh sách user
+                Random rnd = new();
+                userResults = users
+                    .Select(u => new UserResultSum
                     {
-                        UserId = u.Id,
                         NameUser = u.Name,
-                        RegionId = u.RegionId,
-                        Score = lr.Score,
-                        LevelId = lr.LevelId
+                        SumScore = rnd.Next(10, 101), // điểm ngẫu nhiên 10-100
+                        SumLevel = rnd.Next(1, 4)     // đã chơi 1-3 level
                     })
-                .GroupBy(x => new { x.UserId, x.NameUser, x.RegionId })
-                .Select(g => new UserResultSum
-                {
-                    NameUser = g.Key.NameUser,
-                    SumScore = g.Sum(x => x.Score),
-                    SumLevel = g.Select(x => x.LevelId).Distinct().Count()
-                })
-                .ToList();
+                    .ToList();
+            }
+            else
+            {
+                // Có dữ liệu thật trong LevelResults => tính toán dựa trên DB
+                userResults = levelResults
+                    .Join(users,
+                        lr => lr.UserId,
+                        u => u.Id,
+                        (lr, u) => new
+                        {
+                            UserId = u.Id,
+                            NameUser = u.Name,
+                            RegionId = u.RegionId,
+                            Score = lr.Score,
+                            LevelId = lr.LevelId
+                        })
+                    .GroupBy(x => new { x.UserId, x.NameUser, x.RegionId })
+                    .Select(g => new UserResultSum
+                    {
+                        NameUser = g.Key.NameUser,
+                        SumScore = g.Sum(x => x.Score),
+                        SumLevel = g.Select(x => x.LevelId).Distinct().Count()
+                    })
+                    .ToList();
+            }
 
             var ratingData = regions
                 .Select(r => new RatingVM
@@ -278,6 +361,7 @@ public class APIGameController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpGet("GetUserInformation/{userId}")]
     public async Task<IActionResult> GetUserInformation(string userId)
     {
@@ -313,6 +397,7 @@ public class APIGameController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpPut("ChangeUserPassword")]
     public async Task<IActionResult> ChangeUserPassword([FromBody] ChangePasswordDTO changePasswordDTO)
     {
@@ -376,6 +461,7 @@ public class APIGameController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpPut("UpdateUserInformation")]
     public async Task<IActionResult> UpdateUserInformation([FromForm] UpdateUserInformationDTO updateUserInformationDTO)
     {
@@ -438,6 +524,7 @@ public class APIGameController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpDelete("DeleteAccount/{userId}")]
     public async Task<IActionResult> DeleteAccount(string userId)
     {

@@ -1,0 +1,131 @@
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<style>
+    .admin-hero-title {
+        font-size: 2.4rem;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }
+
+    .admin-hero-subtitle {
+        color: #cbd5f5;
+        font-size: 1rem;
+    }
+
+    .admin-card {
+        border-radius: 20px;
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        box-shadow: 0 22px 70px rgba(15, 23, 42, 0.45);
+        transition: transform 0.16s ease-out, box-shadow 0.16s ease-out, border-color 0.16s ease-out;
+        background: radial-gradient(circle at top left, #111827 0%, #020617 55%, #020617 100%);
+        color: #e5e7eb;
+    }
+
+    .admin-card:hover {
+        transform: translateY(-6px) scale(1.01);
+        box-shadow: 0 28px 90px rgba(15, 23, 42, 0.7);
+        border-color: #38bdf8;
+    }
+
+    .admin-card .card-title {
+        font-weight: 700;
+        color: #e5e7eb;
+    }
+
+    .admin-card .btn {
+        border-radius: 999px;
+        font-weight: 700;
+    }
+
+    .admin-hero-wrapper {
+        border-radius: 24px;
+        padding: 1.75rem 1.5rem;
+        background: radial-gradient(circle at top, #0f172a 0%, #020617 55%, #020617 100%);
+        color: #e5e7eb;
+        box-shadow: 0 24px 80px rgba(15, 23, 42, 0.8);
+    }
+</style>
+
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-lg-10 offset-lg-1 admin-hero-wrapper text-center">
+            <h1 class="mb-2 admin-hero-title">Trang quản trị admin</h1>
+            <p class="mb-0 admin-hero-subtitle">Quản lý người chơi, bảng xếp hạng và đăng ký người chơi mới</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm h-100 admin-card">
+                <div class="card-body d-flex flex-column">
+                    <h4 class="card-title">Quản lý người chơi</h4>
+                    <p class="card-text text-muted flex-grow-1">
+                        Xem danh sách người chơi, trạng thái tài khoản, region và avatar.
+                    </p>
+                    <a asp-controller="ApiDemo" asp-action="AdminPlayers" class="btn btn-primary mt-2 w-100">
+                        Vào trang quản lý người chơi
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm h-100 admin-card">
+                <div class="card-body d-flex flex-column">
+                    <h4 class="card-title">Thêm người chơi mới</h4>
+                    <p class="card-text text-muted flex-grow-1">
+                        Tạo tài khoản người chơi mới thông qua form đăng ký (gửi dữ liệu tới API).
+                    </p>
+                    <a asp-controller="ApiDemo" asp-action="Register" class="btn btn-success mt-2 w-100">
+                        Đến trang đăng ký
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-body d-flex flex-column">
+                    <h4 class="card-title">Bảng xếp hạng</h4>
+                    <p class="card-text text-muted flex-grow-1">
+                        Xem bảng xếp hạng người chơi theo từng vùng miền (region) dựa trên điểm số.
+                    </p>
+                    <a asp-controller="ApiDemo" asp-action="Rating" class="btn btn-info mt-2 w-100 text-white">
+                        Xem bảng xếp hạng theo region
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm h-100 admin-card">
+                <div class="card-body d-flex flex-column">
+                    <h4 class="card-title">Quản lý Game Level</h4>
+                    <p class="card-text text-muted flex-grow-1">
+                        Thêm, sửa, xóa và xem thông tin các cấp độ trò chơi (Game Level).
+                    </p>
+                    <a asp-controller="Game" asp-action="Index" class="btn btn-warning mt-2 w-100">
+                        Vào quản lý Game Level
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm h-100 admin-card">
+                <div class="card-body d-flex flex-column">
+                    <h4 class="card-title">Quản lý Question</h4>
+                    <p class="card-text text-muted flex-grow-1">
+                        Tạo, chỉnh sửa và xóa câu hỏi trắc nghiệm cho từng Game Level.
+                    </p>
+                    <a asp-controller="Question" asp-action="Index" class="btn btn-outline-light mt-2 w-100">
+                        Vào quản lý Question
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

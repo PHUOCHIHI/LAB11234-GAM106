@@ -1,5 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 using WebApplication1.Data;
 using WebApplication1.Models;
 using WebApplication1.Service;
@@ -7,7 +11,13 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Log environment and connection string for debugging
+Console.WriteLine($"ENV: {builder.Environment.EnvironmentName}");
+Console.WriteLine($"DefaultConnection: {builder.Configuration.GetConnectionString("DefaultConnection")}");
+
 // Add services to the container.
+builder.Services.AddHttpClient();
+
 builder.Services.AddControllersWithViews()
     .AddJsonOptions(options =>
     {
@@ -20,9 +30,61 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+// Cấu hình JWT
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+    };
+});
+
 // Add Swagger services
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "ServerGame106", Version = "v1" });
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
+                      Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\n
+                      Example: 'Bearer 12345abcdef'",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+                Scheme = "oauth2",
+                Name = "Bearer",
+                In = ParameterLocation.Header,
+            },
+            new List<string>()
+        }
+    });
+});
 
 // Configure EmailSettings from appsettings.json
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
@@ -175,6 +237,7 @@ static void SeedData(ApplicationDbContext context)
             { 
                 userId = 1, 
                 username = "admin", 
+                password = "admin123",
                 linkAvatar = "https://i.pravatar.cc/150?img=1", 
                 otp = 0,
                 region = context.Regions.First(r => r.RegionId == 1),
@@ -184,6 +247,7 @@ static void SeedData(ApplicationDbContext context)
             { 
                 userId = 2, 
                 username = "nguyenvana", 
+                password = "123456",
                 linkAvatar = "https://i.pravatar.cc/150?img=2", 
                 otp = 1234,
                 region = context.Regions.First(r => r.RegionId == 1),
@@ -193,6 +257,7 @@ static void SeedData(ApplicationDbContext context)
             { 
                 userId = 3, 
                 username = "tranvanb", 
+                password = "123456",
                 linkAvatar = "https://i.pravatar.cc/150?img=3", 
                 otp = 5678,
                 region = context.Regions.First(r => r.RegionId == 2),
@@ -202,6 +267,7 @@ static void SeedData(ApplicationDbContext context)
             { 
                 userId = 4, 
                 username = "levanc", 
+                password = "123456",
                 linkAvatar = "https://i.pravatar.cc/150?img=4", 
                 otp = 9012,
                 region = context.Regions.First(r => r.RegionId == 3),
@@ -211,6 +277,7 @@ static void SeedData(ApplicationDbContext context)
             { 
                 userId = 5, 
                 username = "phamvand", 
+                password = "123456",
                 linkAvatar = "https://i.pravatar.cc/150?img=5", 
                 otp = 3456,
                 region = context.Regions.First(r => r.RegionId == 4),
@@ -220,6 +287,7 @@ static void SeedData(ApplicationDbContext context)
             { 
                 userId = 6, 
                 username = "hoangvane", 
+                password = "123456",
                 linkAvatar = "https://i.pravatar.cc/150?img=6", 
                 otp = 7890,
                 region = context.Regions.First(r => r.RegionId == 5),

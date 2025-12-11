@@ -1,0 +1,99 @@
+@model WebApplication1.DTO.LoginDTO
+
+@{
+    ViewData["Title"] = "Admin Login";
+}
+
+<style>
+    .admin-login-card {
+        max-width: 420px;
+        margin: 3rem auto;
+        border-radius: 22px;
+        border: none;
+        box-shadow: 0 26px 80px rgba(15, 23, 42, 0.9);
+        background: radial-gradient(circle at top left, #0f172a 0%, #020617 55%, #020617 100%);
+        color: #e5e7eb;
+    }
+
+    .admin-login-card .card-header {
+        border-bottom: none;
+        background: transparent;
+        text-align: center;
+    }
+
+    .admin-login-title {
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: 1.2rem;
+    }
+
+    .admin-login-subtitle {
+        color: #94a3b8;
+        font-size: 0.9rem;
+    }
+
+    .admin-login-card .form-label {
+        color: #cbd5f5;
+    }
+
+    .admin-login-card .form-control {
+        background-color: #020617;
+        border-color: #1e293b;
+        color: #e5e7eb;
+    }
+
+    .admin-login-card .form-control:focus {
+        border-color: #38bdf8;
+        box-shadow: 0 0 0 0.15rem rgba(56, 189, 248, 0.35);
+    }
+
+    .admin-login-btn {
+        border-radius: 999px;
+        font-weight: 700;
+    }
+
+    .admin-login-meta {
+        font-size: 0.8rem;
+        color: #64748b;
+        text-align: center;
+        margin-top: 0.75rem;
+    }
+</style>
+
+<div class="container py-4">
+    <div class="admin-login-card card">
+        <div class="card-header">
+            <div class="admin-login-title mb-1">Admin Login</div>
+            <div class="admin-login-subtitle">Đăng nhập để truy cập trang quản trị</div>
+        </div>
+        <div class="card-body">
+            <form asp-action="Login" method="post">
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" placeholder="email@example.com" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label"></label>
+                    <input asp-for="Password" type="password" class="form-control" placeholder="Mật khẩu" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 admin-login-btn">Đăng nhập</button>
+
+                @if (ViewBag.StatusCode != null)
+                {
+                    <div class="admin-login-meta">
+                        Kết quả API: Status @ViewBag.StatusCode - Success: @ViewBag.IsSuccessStatusCode
+                    </div>
+                }
+            </form>
+        </div>
+    </div>
+</div>

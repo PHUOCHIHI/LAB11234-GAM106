@@ -1,5 +1,7 @@
 html {
   font-size: 14px;
+  position: relative;
+  min-height: 100%;
 }
 
 @media (min-width: 768px) {
@@ -8,19 +10,94 @@ html {
   }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
 body {
   margin-bottom: 60px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: radial-gradient(circle at top left, #f0f4ff, #ffffff 45%, #f8f9ff 100%);
+  color: #222;
 }
 
+/* Navbar polish */
+.navbar {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.navbar-brand {
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.nav-link {
+  font-weight: 500;
+}
+
+.nav-link.text-dark:hover {
+  color: #0d6efd !important;
+}
+
+/* Main container spacing */
+main {
+  padding-top: 0.5rem;
+}
+
+/* Card & panel look */
+.card {
+  border-radius: 0.75rem;
+}
+
+.card-header {
+  border-top-left-radius: 0.75rem !important;
+  border-top-right-radius: 0.75rem !important;
+}
+
+.card.shadow-sm {
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08) !important;
+}
+
+/* Tables */
+.table {
+  background-color: #fff;
+}
+
+.table thead th {
+  border-bottom-width: 1px;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.table-hover tbody tr:hover {
+  background-color: #f3f6ff;
+}
+
+/* Buttons & focus states */
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.15rem rgba(37, 140, 251, 0.4);
+}
+
+.btn-primary, .btn-success, .btn-info {
+  border-radius: 999px;
+}
+
+.btn-sm {
+  border-radius: 999px;
+}
+
+/* Forms */
+.form-label {
+  font-weight: 500;
+}
+
+.form-control {
+  border-radius: 0.5rem;
+}
+
+.form-check-input:checked {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+/* Floating placeholder behaviour (giữ lại logic cũ) */
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
   color: var(--bs-secondary-color);
   text-align: end;
@@ -28,4 +105,21 @@ body {
 
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
+}
+
+/* Footer */
+.footer {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+/* Utility: subtle section header */
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.section-subtitle {
+  color: #6c757d;
+  margin-bottom: 1.25rem;
 }
